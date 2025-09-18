@@ -1,6 +1,7 @@
 package com.jobtrackr.backend.entity;
 
 import com.jobtrackr.backend.entity.base.Auditable;
+import com.jobtrackr.backend.entity.enums.SeniorityLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +35,7 @@ public class Position extends Auditable {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
+    // Relación real con Application
     @OneToMany(mappedBy = "position", fetch = FetchType.LAZY)
     private List<Application> applications;
 

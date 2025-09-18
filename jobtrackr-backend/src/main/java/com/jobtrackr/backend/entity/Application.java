@@ -36,8 +36,10 @@ public class Application extends Auditable {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    // Posición (por ahora texto libre)
-    private String positionTitle;
+    // Relación con Position (ahora real)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "position_id")
+    private Position position;
 
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
