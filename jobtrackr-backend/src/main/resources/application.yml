@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jobtrackr
+    username: jobadmin
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update  # "update" crea/actualiza tablas según tus entidades
+    show-sql: true      # para ver las consultas SQL en consola
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+server:
+  port: 8080  # el puerto donde correrá tu aplicación
