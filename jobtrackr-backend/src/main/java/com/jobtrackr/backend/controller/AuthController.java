@@ -1,5 +1,7 @@
 package com.jobtrackr.backend.controller;
 
+import com.jobtrackr.backend.dto.LoginRequestDTO;
+import com.jobtrackr.backend.dto.LoginResponseDTO;
 import com.jobtrackr.backend.dto.SignupRequestDTO;
 import com.jobtrackr.backend.entity.User;
 import com.jobtrackr.backend.service.AuthService;
@@ -21,5 +23,10 @@ public class AuthController {
     public ResponseEntity<?> signup(@RequestBody SignupRequestDTO request) {
         User user = authService.signup(request);
         return ResponseEntity.ok("User registered whit id: " + user.getId());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 }

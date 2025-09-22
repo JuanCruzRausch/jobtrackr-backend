@@ -15,5 +15,9 @@ spring:
     serialization:
       INDENT_OUTPUT: true
 
+jwt:
+  secret: "estaesunaclaveultralargaseguroparahs51212345678901234567890123456789012345678901234"
+  expirationMs: 3600000  # 1 hora
+
 server:
   port: 8080  # el puerto donde correr� tu aplicaci�n
