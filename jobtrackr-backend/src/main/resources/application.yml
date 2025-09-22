@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update  # "update" crea/actualiza tablas según tus entidades
+      ddl-auto: update  # "update" crea/actualiza tablas segï¿½n tus entidades
     show-sql: true      # para ver las consultas SQL en consola
     properties:
       hibernate:
@@ -16,4 +16,4 @@ spring:
       INDENT_OUTPUT: true
 
 server:
-  port: 8080  # el puerto donde correrá tu aplicación
+  port: 8080  # el puerto donde correrï¿½ tu aplicaciï¿½n
