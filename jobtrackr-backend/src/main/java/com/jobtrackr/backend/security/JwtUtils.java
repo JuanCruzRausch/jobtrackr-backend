@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtUtils {
@@ -25,12 +26,14 @@ public class JwtUtils {
                 .compact();
     }
 
-    public Long getUserIdFromJwt(String token) {
-        return Long.parseLong(Jwts.parser()
+    public UUID getUserIdFromJwt(String token) {
+        String subject = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject());
+                .getSubject();
+
+        return UUID.fromString(subject);
     }
 
     public boolean validateJwtToken(String authToken) {
