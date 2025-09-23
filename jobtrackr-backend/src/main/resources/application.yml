@@ -16,7 +16,8 @@ spring:
       INDENT_OUTPUT: true
 
 jwt:
-  secret: "estaesunaclaveultralargaseguroparahs51212345678901234567890123456789012345678901234"
+  # 64 bytes en Base64 para HS512 (solo ejemplo; cambia en prod)
+  secret: "dWJha2JZcXZ3eWVydGlvU2VjdXJlS2V5QmFzZTY0NjRCeXRlc01pbmRZb3VyT3duIQ=="
   expirationMs: 2592000000  # 30 dias
 
 server:
