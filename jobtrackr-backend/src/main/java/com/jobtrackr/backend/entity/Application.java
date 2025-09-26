@@ -4,6 +4,7 @@ import com.jobtrackr.backend.entity.base.Auditable;
 import com.jobtrackr.backend.entity.enums.ApplicationStatus;
 import com.jobtrackr.backend.entity.enums.JobType;
 import com.jobtrackr.backend.entity.enums.WorkMode;
+import com.jobtrackr.backend.entity.enums.CurrencyType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,17 +27,14 @@ public class Application extends Auditable {
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
-    // Relación con User
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Relación con Company
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    // Relación con Position (ahora real)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position_id")
     private Position position;
@@ -57,7 +55,6 @@ public class Application extends Auditable {
 
     private String location;
 
-    // Fuente de la postulación
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_id")
     private Source source;
@@ -65,7 +62,51 @@ public class Application extends Auditable {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    // Relación con ApplicationSkill (skills requeridas por la posición)
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationSkill> applicationSkills;
+
+    // New compensation/benefits fields
+    @Enumerated(EnumType.STRING)
+    private CurrencyType currencyType;
+
+    @Column(nullable = false)
+    private boolean hasBonusRsu = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String bonusRsuDetails;
+
+    @Column(nullable = false)
+    private boolean hasRaises = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String raisesDetails;
+
+    @Column(nullable = false)
+    private boolean hasThirteenthSalary = false;
+
+    @Column(nullable = false)
+    private boolean hasExtraBenefits = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String extraBenefitsDetails;
+
+    @Column(nullable = false)
+    private boolean hasHealthInsurance = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String healthInsuranceDetails;
+
+    @Column(nullable = false)
+    private boolean hasVacation = false;
+
+    private Integer vacationDays;
+
+    @Column(nullable = false)
+    private boolean hasHolidays = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String holidaysDetails;
+
+    @Column(length = 255)
+    private String paymentMethod;
 }
