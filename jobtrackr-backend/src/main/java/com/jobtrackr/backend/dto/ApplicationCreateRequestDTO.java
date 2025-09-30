@@ -11,12 +11,14 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record ApplicationCreateRequestDTO(
         @NotNull UUID companyId,
         UUID positionId,
         UUID sourceId,
+        List<UUID> skillIds,
         @NotNull ApplicationStatus status,
         LocalDateTime applicationDate,
         BigDecimal salaryExpected,
