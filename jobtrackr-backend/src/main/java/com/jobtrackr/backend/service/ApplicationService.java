@@ -1,18 +1,9 @@
 package com.jobtrackr.backend.service;
 
-import com.jobtrackr.backend.dto.ApplicationCreateRequestDTO;
-import com.jobtrackr.backend.dto.ApplicationResponseDTO;
-import com.jobtrackr.backend.dto.ApplicationUpdateRequestDTO;
-import com.jobtrackr.backend.entity.Application;
-import com.jobtrackr.backend.entity.Company;
-import com.jobtrackr.backend.entity.Position;
-import com.jobtrackr.backend.entity.Source;
+import com.jobtrackr.backend.dto.*;
+import com.jobtrackr.backend.entity.*;
 import com.jobtrackr.backend.entity.enums.ApplicationStatus;
-import com.jobtrackr.backend.repository.ApplicationRepository;
-import com.jobtrackr.backend.repository.CompanyRepository;
-import com.jobtrackr.backend.repository.PositionRepository;
-import com.jobtrackr.backend.repository.SourceRepository;
-import com.jobtrackr.backend.repository.UserRepository;
+import com.jobtrackr.backend.repository.*;
 import com.jobtrackr.backend.repository.spec.ApplicationSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +27,8 @@ public class ApplicationService {
     private final PositionRepository positionRepository;
     private final SourceRepository sourceRepository;
     private final UserRepository userRepository;
+    private final SkillRepository skillRepository;
+    private final ApplicationSkillRepository applicationSkillRepository;
 
     @Transactional(readOnly = true)
     public List<ApplicationResponseDTO> list(UUID userId, String status, String company, String source) {
@@ -112,7 +107,22 @@ public class ApplicationService {
         app.setHolidaysDetails(req.holidaysDetails());
         app.setPaymentMethod(req.paymentMethod());
 
-        return toDto(applicationRepository.save(app));
+        Application savedApp = applicationRepository.save(app);
+
+        // Associate skills
+        if (req.skillIds() != null && !req.skillIds().isEmpty()) {
+            List<ApplicationSkill> applicationSkills = new ArrayList<>();
+            for (UUID skillId : req.skillIds()) {
+                Skill skill = skillRepository.findById(skillId)
+                        .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Skill not found with id: " + skillId));
+                ApplicationSkill applicationSkill = new ApplicationSkill(null, savedApp, skill);
+                applicationSkills.add(applicationSkill);
+            }
+            applicationSkillRepository.saveAll(applicationSkills);
+            savedApp.setApplicationSkills(applicationSkills);
+        }
+
+        return toDto(savedApp);
     }
 
     @Transactional
@@ -136,6 +146,8 @@ public class ApplicationService {
                     .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Source not found"));
             app.setSource(source);
         }
+
+        // TODO: Add logic to update skills
 
         if (req.status() != null) app.setStatus(req.status());
         if (req.applicationDate() != null) app.setApplicationDate(req.applicationDate());
@@ -179,14 +191,36 @@ public class ApplicationService {
         }
     }
 
+    private StageResponseDTO toStageDto(Stage s) {
+        return new StageResponseDTO(
+                s.getId(),
+                s.getStageType(),
+                s.getScheduledDate(),
+                s.getStatus(),
+                s.getFeedback()
+        );
+    }
+
     private ApplicationResponseDTO toDto(Application a) {
+        List<String> skills = a.getApplicationSkills() != null ?
+                a.getApplicationSkills().stream()
+                        .map(as -> as.getSkill().getName())
+                        .toList() :
+                Collections.emptyList();
+
+        List<StageResponseDTO> stages = a.getStages() != null ?
+                a.getStages().stream()
+                        .map(this::toStageDto)
+                        .toList() :
+                Collections.emptyList();
+
         return new ApplicationResponseDTO(
                 a.getId(),
                 a.getUser() != null ? a.getUser().getId() : null,
                 a.getCompany() != null ? a.getCompany().getId() : null,
                 a.getCompany() != null ? a.getCompany().getName() : null,
                 a.getPosition() != null ? a.getPosition().getId() : null,
-                a.getPosition() != null ? a.getPosition().getTitle() : null, // adjust to your Position field
+                a.getPosition() != null ? a.getPosition().getTitle() : null,
                 a.getStatus(),
                 a.getApplicationDate(),
                 a.getSalaryExpected(),
@@ -195,8 +229,10 @@ public class ApplicationService {
                 a.getJobType(),
                 a.getWorkMode(),
                 a.getLocation(),
-                a.getSource() != null ? a.getSource().getName() : null,
+                a.getSource() != null ? a.getSource().getName().name() : null,
                 a.getNotes(),
+                skills,
+                stages,
                 a.isHasBonusRsu(),
                 a.getBonusRsuDetails(),
                 a.isHasRaises(),

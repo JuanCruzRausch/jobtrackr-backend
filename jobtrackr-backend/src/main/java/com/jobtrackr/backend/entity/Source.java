@@ -1,5 +1,6 @@
 package com.jobtrackr.backend.entity;
 
+import com.jobtrackr.backend.entity.enums.SourceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,8 +20,9 @@ public class Source {
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
-    private String name;
+    private SourceType name;
 
     private String linkUrl;
 }

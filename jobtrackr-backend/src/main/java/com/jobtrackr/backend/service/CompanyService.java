@@ -54,6 +54,12 @@ public class CompanyService {
         return toDto(company);
     }
 
+    @Transactional
+    public void delete(UUID id) {
+        Company c = companyRepository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Company not found"));
+        companyRepository.delete(c);
+    }
+
     private CompanyResponseDTO toDto(Company c) {
         return new CompanyResponseDTO(
                 c.getId(),

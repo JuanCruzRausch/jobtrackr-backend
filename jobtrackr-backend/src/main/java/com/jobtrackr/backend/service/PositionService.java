@@ -56,6 +56,12 @@ public class PositionService {
         return toDto(position);
     }
 
+    @Transactional
+    public void delete(UUID id) {
+        Position p = positionRepository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Position not found"));
+        positionRepository.delete(p);
+    }
+
     private PositionResponseDTO toDto(Position p) {
         return new PositionResponseDTO(
                 p.getId(),

@@ -65,6 +65,9 @@ public class Application extends Auditable {
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationSkill> applicationSkills;
 
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Stage> stages;
+
     // New compensation/benefits fields
     @Enumerated(EnumType.STRING)
     private CurrencyType currencyType;

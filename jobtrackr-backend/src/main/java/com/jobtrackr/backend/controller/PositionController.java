@@ -43,4 +43,10 @@ public class PositionController {
             @Valid @RequestBody PositionUpdateRequestDTO request) {
         return ResponseEntity.ok(service.update(id, request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
